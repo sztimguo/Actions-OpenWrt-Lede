@@ -43,6 +43,7 @@ git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 rm -rf ../lean/luci-theme-argon
 
+#add apps
 git clone --depth=1 https://github.com/kenzok8/openwrt-packages
 rm -rf ./openwrt-packages/luci-app-jd-dailybonus
 rm -rf ./openwrt-packages/luci-app-serverchan
@@ -59,6 +60,7 @@ rm -rf ./small/v2ray-plugin
 rm -rf ./small/xray-core
 rm -rf ./small/xray-plugin
 
+#passwall setup
 svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/usr/share/passwall/rules rules
 cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
 #cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
@@ -74,7 +76,7 @@ popd
 
 
 
-# Add luci-app-dockerman
+# Add luci-app-dockerman and setup
 svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
 if [ -e feeds/packages/utils/docker-ce ];then
