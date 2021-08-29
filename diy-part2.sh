@@ -24,17 +24,6 @@ sed -i '/CYXluq4wUazHjmCDBCqXF/d' $ZZZ
 
 
 
-pushd package/lean
-
-# Add luci-app-ssr-plus
-git clone --depth=1 https://github.com/fw876/helloworld
-svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
-cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
-
-popd
-
-
-
 # Clone community packages to package/community
 mkdir package/community
 pushd package/community
@@ -75,6 +64,11 @@ cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rul
 #cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
 #cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
 #cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
+
+# Add luci-app-ssr-plus
+git clone --depth=1 https://github.com/fw876/helloworld
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
+cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
 popd
 
