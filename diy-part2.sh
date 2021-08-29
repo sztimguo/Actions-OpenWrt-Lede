@@ -28,53 +28,8 @@ pushd package/lean
 
 # Add luci-app-ssr-plus
 git clone --depth=1 https://github.com/fw876/helloworld
-cat > helloworld/luci-app-ssr-plus/root/etc/ssrplus/black.list << EOF
-github.com
-openwrt.org
-google.com
-youtube.com
-services.googleapis.cn
-googleapis.cn
-heroku.com
-githubusercontent.com 
-EOF
-cat > helloworld/luci-app-ssr-plus/root/etc/ssrplus/white.list << EOF
-apple.com
-microsoft.com
-dyndns.com
-douyucdn.cn
-douyucdn2.cn
-youku.com
-qq.com
-iqiyi.com
-bilibili.com
-baidu.com
-weibo.com
-jd.com
-taobao.com
-tmall.com
-iqiyi.com
-55188.com
-ifeng.com
-taoguba.com.cn
-xuangubao.com
-cls.cn
-10jqka.com.cn
-eastmoney.com
-jrj.com.cn
-p5w.net
-stcn.com
-zqrb.cn
-hexun.com
-guziyuan.cn
-xueqiu.com
-zhihu.com
-jin10.com
-qcc.com
-right.com.cn
-koolshare.cn
-znds.com
-EOF
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
+cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
 popd
 
@@ -116,10 +71,10 @@ rm -rf ./small/xray-core
 rm -rf ./small/xray-plugin
 
 svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/usr/share/passwall/rules rules
-#cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
-cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
-cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
-cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
+cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
+#cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
+#cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
+#cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
 
 popd
 
