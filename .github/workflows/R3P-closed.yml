@@ -187,7 +187,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
-        GITHUB_TOKEN: ${{ secrets.R3P_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       with:
         name: ${{ env.FILE_DATE }} 「 R3P-closed 」
         tag_name: ${{ steps.tag.outputs.release_tag }}-R3Pclosed
