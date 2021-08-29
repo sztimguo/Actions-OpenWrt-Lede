@@ -116,10 +116,10 @@ rm -rf ./small/xray-core
 rm -rf ./small/xray-plugin
 
 #svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/root/usr/share/passwall/rules rules
-#cp -r rules/* luci-app-passwall/root/usr/share/passwall/rules
-cp -r rules/direct_ip luci-app-passwall/root/usr/share/passwall/rules/direct_ip
-cp -r rules/direct_host luci-app-passwall/root/usr/share/passwall/rules/direct_host
-cp -r rules/proxy_host luci-app-passwall/root/usr/share/passwall/rules/proxy_host
+#cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
+cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
+cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
+cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
 
 popd
 
