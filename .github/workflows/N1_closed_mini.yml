@@ -1,0 +1,255 @@
+#=================================================
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: P3TERX
+# Blog: https://p3terx.com
+#=================================================
+
+name: N1_Mini
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+  #schedule:
+    #- cron: 00 2 */10 * *
+
+env:
+  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_BRANCH: master
+  FEEDS_CONF: feeds.conf.default
+  CONFIG_FILE: N1_mini.config
+  DIY_P1_SH: N1_diy_part1.sh
+  DIY_P2_SH: N1_diy_part2.sh
+  SSH_ACTIONS: false
+  UPLOAD_BIN_DIR: true
+  UPLOAD_FIRMWARE: false
+  UPLOAD_COWTRANSFER: false
+  UPLOAD_WETRANSFER: false
+  UPLOAD_RELEASE: true
+  SERVERCHAN_SCKEY: false
+  BOT: true
+  RECENT_LASTEST: 3
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Checkout 检查项目分支
+      uses: actions/checkout@main
+
+    - name: Initialization environment 安装编译环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+        
+        sudo mkdir -p /upload
+        sudo chown $USER:$GROUPS /upload
+        
+        cd /upload
+        echo "UPLOAD=$PWD" >> $GITHUB_ENV       
+        echo "FILE_UPLOAD_TIME=$(date "+%Y%m%d-%H%M")"  >> $GITHUB_ENV
+        
+    - name: Clone source code 下载固件源码
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        
+    - name: Load custom feeds 加载自定义设置
+      run: |
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        chmod +x $DIY_P1_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
+        
+    - name: Update feeds 下载插件
+      run: cd openwrt && ./scripts/feeds update -a
+
+    - name: Install feeds 读取插件
+      run: cd openwrt && ./scripts/feeds install -a
+
+    - name: Load custom configuration 更改设置
+      run: |
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x $DIY_P2_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
+        
+    - name: SSH connection to Actions SSH链接管理(CTRL+C进入链接，CTRL+D断开链接)
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+    - name: Download package 下载安装包
+      id: package
+      run: |
+        cd openwrt
+        make defconfig
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+        
+    - name: Compile the firmware 开始编译固件
+      id: compile
+      run: |
+        cd openwrt
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 || make -j1 V=s
+
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        
+        cp .config ${UPLOAD}/mini.config
+        cd $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
+        cp openwrt-armvirt-64-default-rootfs.tar.gz  ${UPLOAD}/openwrt-armvirt-64-default-rootfs-mini.tar.gz
+        cp -r *.xz ${UPLOAD}/
+        echo "::set-output name=status::success"
+                
+    - name: Package OpenWrt with flippy script(+o)  使用flippy脚本打包(+o) 
+      if: steps.compile.outputs.status == 'success' && !cancelled()
+      uses: roacn/package-flippy-openwrt@main
+      with:
+        types: s905d
+        out: ${{ env.UPLOAD }}
+        whoami: Ss
+        openwrt-path: $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
+
+    - name: Package OpenWrt with flippy script(+) 用flippy脚本打包(+) 
+      if: steps.compile.outputs.status == 'success' && !cancelled()
+      uses: roacn/package-flippy-openwrt@main
+      with:
+        types: s905d
+        kernel-version: latest+
+        out: ${{ env.UPLOAD }}
+        openwrt-path: openwrt/bin/targets/*/*
+        
+    - name: Upload bin directory to Actions 上传bin压缩目录
+      uses: actions/upload-artifact@v2
+      if: env.UPLOAD_BIN_DIR == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
+      with:
+        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
+        path: openwrt/bin
+        retention-days: ${{ env.RECENT_LASTEST }}
+        if-no-files-found: ignore
+        
+    - name: Organize files 整理编译好的固件
+      id: organize
+      if: env.UPLOAD_FIRMWARE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
+      run: |
+        cd openwrt/bin/targets/*/*
+        rm -rf packages && mkdir packages
+        find -name "*esxi-flat.vmdk*" | xargs -i mv -f {} packages
+        find -name "*kernel.bin*" | xargs -i mv -f {} packages
+        find -name "*.manifest*" | xargs -i mv -f {} packages
+        find -name "*vmlinuz*" | xargs -i mv -f {} packages
+        find -name "*esxi.vmdk*" | xargs -i mv -f {} packages
+        rm -rf packages
+        echo "::set-output name=status::success"
+            
+    - name: Upload firmware directory 上传固件到github
+      uses: actions/upload-artifact@v2
+      if: env.UPLOAD_FIRMWARE == 'true' && steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: OpenWrt_5.4${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
+        path: $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
+        retention-days: ${{ env.RECENT_LASTEST }}
+        if-no-files-found: ignore
+    
+    - name: Upload firmware to cowtransfer 上传固件到NN网盘
+      id: cowtransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress ${UPLOAD} 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+        
+    - name: Upload firmware to WeTransfer 上传固件到WT网盘
+      id: wetransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ${UPLOAD} 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+        
+    - name: Generate release tag 创建release标签
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y%m%d-%H%M")"
+        echo "FILE_DATE=$(date "+%Y-%m-%d %H:%M")"  >> $GITHUB_ENV
+        echo "FILE_TIME=$(date "+%Y年%m月%d日-%H点")" >> $GITHUB_ENV
+        touch release.txt
+        echo "[固件源码](https://github.com/coolsnowwolf/lede)" >> release.txt
+        echo "
+          由衷感谢所有为openwrt无私奉献的大佬们
+          默认IP：192.168.1.2 默认密码： password
+          全新刷入emmc方法：
+             1. 固件刷入U盘。
+             2. cd root
+             3. ./install-to-emmc.sh
+             4. 拔掉U盘，断电重启。" >> release.txt
+        echo "📥 固件下载" >> release.txt
+        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [国内NN网盘](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [国外WT网盘](${{ steps.wetransfer.outputs.url }})" >> release.txt
+        echo "::set-output name=status::success"
+        
+    - name: Upload firmware to release 发布至release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+      with:
+        name: ${{ env.FILE_DATE }} 「 N1-closed-mini 」
+        tag_name: ${{ steps.tag.outputs.release_tag }}-N1mini
+        body_path: release.txt
+        files: ${{ env.UPLOAD }}/*
+
+    - name: Delete workflow runs 删除workflow
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 7
+        keep_minimum_runs: 0
+        
+    - name: Remove old Releases 删除旧版 Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 10
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+
+    - name: Wechat notice 微信通知
+      uses: emon100/Action-Serverchan@v2
+      if: steps.tag.outputs.status == 'success' && env.SERVERCHAN_SCKEY == 'true' && !cancelled()
+      with:
+        SCKEY: ${{ secrets.SERVERCHAN_SCKEY }}
+        text: 恭喜主人「 N1-closed-mini 」固件编译成功！
+        desp: 我亲爱的主人：您「 Actions-OpenWrt-Lede」仓库编译的${{ env.FILE_DATE }} 「 N1-closed-mini 」固件顺利编译完成了！
+        
+    - name: Bot notice 电报机器人信息通知
+      if: steps.tag.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
+      run: |
+        curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 N1-closed-mini 」固件顺利编译完成了！💐" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
