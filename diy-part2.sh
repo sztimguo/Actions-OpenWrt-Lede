@@ -126,8 +126,6 @@ popd
 
 
 # Add luci-app-dockerman
-# git clone --depth=1 https://github.com/lisaac/luci-lib-docker
-# git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
 svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
 if [ -e feeds/packages/utils/docker-ce ];then
