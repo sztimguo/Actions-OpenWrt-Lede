@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# x86机型,默认内核5.4，修改内核为5.10
-# sed -i 's/PATCHVER:=5.4/PATCHVER:=5.10/g' target/linux/x86/Makefile
-
 # echo '修改默认LAN口IP'
 # sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
 # 修改IP项的EOF于EOF之间请不要插入其他扩展代码，可以删除或注释里面原本的代码
