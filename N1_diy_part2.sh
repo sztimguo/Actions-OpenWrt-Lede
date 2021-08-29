@@ -15,7 +15,9 @@ echo "iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE" >> package/network/c
 
 
 
-pushd package/lean
+# Clone community packages to package/community
+mkdir package/community
+pushd package/community
 
 # Add luci-app-amlogic
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic
@@ -27,46 +29,22 @@ svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic
 # svn co https://github.com/roacn/luci-app-cpufreq/trunk/luci-app-cpufreq
 # git clone https://github.com/roacn/luci-app-cpufreq
 
-#Add luci-app-jd-dailybonus
-#rm -rf ./luci-app-jd-dailybonus
-#git clone https://github.com/jerrykuku/luci-app-jd-dailybonus
-
-# Add luci-app-ssr-plus
-git clone --depth=1 https://github.com/fw876/helloworld
-# cat > helloworld/luci-app-ssr-plus/root/etc/ssrplus/black.list << EOF
-# services.googleapis.cn
-# googleapis.cn
-# heroku.com
-# githubusercontent.com 
-# EOF
-
-popd
-
-
-
-# Clone community packages to package/community
-mkdir package/community
-pushd package/community
-
 # Add luci-app-diskman
-# depth用于指定克隆深度，为1即表示只克隆最近一次commit.
 git clone --depth=1 https://github.com/lisaac/luci-app-diskman
 mkdir parted
 cp luci-app-diskman/Parted.Makefile parted/Makefile
 
-# Add luci-app-openclash
-# git clone --depth=1 https://github.com/vernesong/OpenClash
+# Add luci-app-onliner (need luci-app-nlbwmon)
+git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 
 # Add luci-app-serverchan
 git clone --depth=1 https://github.com/tty228/luci-app-serverchan
-
-# Add luci-app-onliner (need luci-app-nlbwmon)
-git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 
 # Add luci-theme-argon
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 rm -rf ../lean/luci-theme-argon
 
+#add apps
 git clone --depth=1 https://github.com/kenzok8/openwrt-packages
 rm -rf ./openwrt-packages/luci-app-jd-dailybonus
 rm -rf ./openwrt-packages/luci-app-serverchan
@@ -83,18 +61,28 @@ rm -rf ./small/v2ray-plugin
 rm -rf ./small/xray-core
 rm -rf ./small/xray-plugin
 
+#passwall setup
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/usr/share/passwall/rules rules
+cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
+#cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
+#cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
+#cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
+
+# Add luci-app-ssr-plus
+git clone --depth=1 https://github.com/fw876/helloworld
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
+cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
+
 popd
 
 
 
-# Add luci-app-dockerman
-# git clone --depth=1 https://github.com/lisaac/luci-lib-docker
-# git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
+# Add luci-app-dockerman and setup
 svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
 if [ -e feeds/packages/utils/docker-ce ];then
-	sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
-	sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
+sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
+sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
 fi
 
 # Mod zzz-default-settings
