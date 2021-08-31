@@ -164,6 +164,7 @@ jobs:
         find -name "*vmlinuz*" | xargs -i mv -f {} packages
         find -name "*esxi.vmdk*" | xargs -i mv -f {} packages
         rm -rf packages
+        mv -f config.buildinfo mini-diff.config
         echo "::set-output name=status::success"
             
     - name: Upload firmware directory 上传固件到github
