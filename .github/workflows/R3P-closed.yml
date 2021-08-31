@@ -138,7 +138,8 @@ jobs:
         find -name "*esxi.vmdk*" | xargs -i mv -f {} packages
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        cp $GITHUB_WORKSPACE/openwrt/.config closed.config
+        cp $GITHUB_WORKSPACE/openwrt/.config R3P.config
+        mv -f config.buildinfo R3P-diff.config
         echo "::set-output name=status::success"        
    
     - name: Upload firmware directory 上传固件到github
