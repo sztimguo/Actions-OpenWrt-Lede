@@ -25,11 +25,12 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 
 
 # Clone community packages to package/community
-mkdir package/community
-pushd package/community
+#mkdir package/community
+pushd package/lede
 
 # Add luci-app-diskman
 echo "Add luci-app-diskman"
+rm -rf ./luci-app-diskman
 git clone --depth=1 https://github.com/lisaac/luci-app-diskman
 mkdir parted
 cp luci-app-diskman/Parted.Makefile parted/Makefile
