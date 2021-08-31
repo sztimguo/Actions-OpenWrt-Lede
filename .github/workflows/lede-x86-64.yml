@@ -152,6 +152,7 @@ jobs:
         find -name "*vmlinuz*" | xargs -i mv -f {} packages
         #find -name "*esxi.vmdk*" | xargs -i mv -f {} packages
         rm -rf packages
+        mv -f config.buildinfo x86-64-diff.config
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         cp $GITHUB_WORKSPACE/openwrt/.config x86-64.config
         echo "FILE_DATE=$(date "+%Y-%m-%d %H:%M")"  >> $GITHUB_ENV
