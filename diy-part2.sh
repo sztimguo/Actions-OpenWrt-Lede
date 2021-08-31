@@ -73,7 +73,8 @@ svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplu
 cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
 #add new theme jj
-https://github.com/netitgo/luci-theme-jj.git
+echo "add new theme jj"
+git clone --depth=1 https://github.com/netitgo/luci-theme-jj.git
 
 popd
 
