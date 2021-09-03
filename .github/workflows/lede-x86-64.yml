@@ -244,7 +244,7 @@ jobs:
     - name: dingding notice 钉钉信息通知
       if: steps.release.outputs.status == 'success' && env.DINGDING == 'true' && !cancelled()
       run: |
-        curl 'https://oapi.dingtalk.com/robot/send?access_token=6ef465ea3ace8298ac74071cab8954f7c436e2e3ba7200830d7412b15a3c316e' -H 'Content-Type: application/json' -d '{"msgtype": "text","text": {"content":"我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 lede-x86-64 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases"}}'
+        curl 'https://oapi.dingtalk.com/robot/send?access_token=${{ secrets.DINGDING_BOT_TOKEN }}' -H 'Content-Type: application/json' -d '{"msgtype": "text","text": {"content":"我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 lede-x86-64 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases"}}'
        
        
        
