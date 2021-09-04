@@ -44,11 +44,6 @@ git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
 echo "Add luci-app-serverchan"
 git clone --depth=1 https://github.com/tty228/luci-app-serverchan
 
-# Add luci-theme-argon
-echo "Add luci-theme-argon"
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
-rm -rf ../lean/luci-theme-argon
-
 #add apps
 echo "clone kenzok8/openwrt-packages"
 git clone --depth=1 https://github.com/kenzok8/openwrt-packages
@@ -78,6 +73,12 @@ echo "add  luci-app-ssr-plus"
 git clone --depth=1 https://github.com/fw876/helloworld
 svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
 cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
+
+
+# Add luci-theme-argon
+echo "Add luci-theme-argon"
+rm -rf ./luci-theme-argon
+git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 
 #add new theme jj
 echo "add new theme jj"
