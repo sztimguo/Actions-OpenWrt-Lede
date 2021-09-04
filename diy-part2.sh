@@ -78,8 +78,8 @@ cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
 # Add luci-theme-argon
 echo "Add luci-theme-argon"
+rm -rf ./luci-theme-argon
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
-rm -rf ../lean/luci-theme-argon
 
 #add new theme jj
 echo "Add new theme jj"
