@@ -15,9 +15,7 @@ echo "iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE" >> package/network/c
 
 
 
-# Clone community packages to package/community
-mkdir package/community
-pushd package/community
+pushd package/lean
 
 # Add luci-app-amlogic
 echo "Add luci-app-amlogic"
@@ -25,11 +23,12 @@ svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic
 # luci-lib-fs为依赖库
 # svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-lib-fs
 
-# Add luci-app-cpufreq
-#echo "Add luci-app-cpufreq"
-# rm -rf ./luci-app-cpufreq
-# svn co https://github.com/roacn/luci-app-cpufreq/trunk/luci-app-cpufreq
-# git clone https://github.com/roacn/luci-app-cpufreq
+# Modify luci-app-cpufreq settings
+echo "luci-app-cpufreq修改一些代码适配amlogic"
+sed -i 's/LUCI_DEPENDS.*/LUCI_DEPENDS:=\@\(arm\|\|aarch64\)/g' ./luci-app-cpufreq/Makefile
+echo "为 armvirt 添加 autocore 支持"
+sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' ./autocore/Makefile
+
 
 # Add luci-app-diskman
 echo "Add luci-app-diskman"
