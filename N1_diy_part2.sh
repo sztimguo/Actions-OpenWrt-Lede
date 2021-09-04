@@ -72,9 +72,6 @@ rm -rf ./small/xray-plugin
 echo "passwall setup"
 svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/usr/share/passwall/rules rules
 cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
-#cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
-#cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
-#cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
 
 # Add luci-app-ssr-plus
 echo "add  luci-app-ssr-plus"
@@ -90,7 +87,7 @@ popd
 
 
 
-# Add luci-app-dockerman and setup
+echo "Add luci-app-dockerman and setup"
 svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
 if [ -e feeds/packages/utils/docker-ce ];then
@@ -98,6 +95,21 @@ sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
 sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
 fi
 
+echo "修复NTFS格式优盘不自动挂载"
+packages=" \
+brcmfmac-firmware-43430-sdio brcmfmac-firmware-43455-sdio kmod-brcmfmac wpad \
+kmod-fs-ext4 kmod-fs-vfat kmod-fs-exfat dosfstools e2fsprogs ntfs-3g \
+kmod-usb2 kmod-usb3 kmod-usb-storage kmod-usb-storage-extras kmod-usb-storage-uas \
+kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 \
+blkid lsblk parted fdisk cfdisk losetup resize2fs tune2fs pv unzip \
+lscpu htop iperf3 curl lm-sensors python3 luci-app-amlogic
+"
+sed -i '/FEATURES+=/ { s/cpiogz //; s/ext4 //; s/ramdisk //; s/squashfs //; }' \
+   		target/linux/armvirt/Makefile
+for x in $packages; do
+   		sed -i "/DEFAULT_PACKAGES/ s/$/ $x/" target/linux/armvirt/Makefile
+done
+  
 # Mod zzz-default-settings
 # 选择argon为默认主题
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
