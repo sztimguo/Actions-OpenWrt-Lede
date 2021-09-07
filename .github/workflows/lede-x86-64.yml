@@ -35,7 +35,6 @@ env:
   UPLOAD_RELEASE: true
   SERVERCHAN_SCKEY: false
   BOT: true
-  DINGDING: true
   RECENT_LASTEST: 3
   TZ: Asia/Shanghai
 
@@ -246,9 +245,4 @@ jobs:
       if: steps.release.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
       run: |
         curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 lede-x86-64 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
-
-    - name: dingding notice 钉钉信息通知
-      if: steps.release.outputs.status == 'success' && env.DINGDING == 'true' && !cancelled()
-      run: |
-        curl 'https://oapi.dingtalk.com/robot/send?access_token=${{ secrets.DINGDING_BOT_TOKEN }}' -H 'Content-Type: application/json' -d '{"msgtype": "text","text": {"content":"我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 lede-x86-64 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases"}}'
-        
+      
