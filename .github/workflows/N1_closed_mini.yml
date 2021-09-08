@@ -34,6 +34,7 @@ env:
   UPLOAD_RELEASE: true
   SERVERCHAN_SCKEY: false
   BOT: true
+  CACHEFLAG: false
   RECENT_LASTEST: 3
   TZ: Asia/Shanghai
 
@@ -73,6 +74,7 @@ jobs:
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Cache
+      if: env.CACHEFLAG == 'true' && !cancelled()
       uses: klever1988/cachewrtbuild@main
       with:
         ccache: 'true'
