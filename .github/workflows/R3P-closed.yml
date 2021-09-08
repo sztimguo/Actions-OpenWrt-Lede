@@ -34,7 +34,7 @@ env:
   UPLOAD_RELEASE: true
   SERVERCHAN_SCKEY: false
   BOT: true
-  CACHEFLAG: true
+  CACHEFLAG: false
   RECENT_LASTEST: 3  
   TZ: Asia/Shanghai
 
