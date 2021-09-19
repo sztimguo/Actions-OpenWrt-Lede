@@ -22,10 +22,9 @@ sed -i '/CYXluq4wUazHjmCDBCqXF/d' $ZZZ
 # 选择argon为默认主题
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
+# 更换 opkg 源
+# echo "sed -i 's#https://mirrors.cloud.tencent.com/lede/snapshots#https://k2p.dreamwalkerxz.workers.dev/k2p-repo#g' /etc/opkg/distfeeds.conf" >> package/lean/default-settings/files/zzz-default-settings
 
-
-# Clone community packages to package/community
-#mkdir package/community
 pushd package/lede
 
 # Add luci-app-diskman
