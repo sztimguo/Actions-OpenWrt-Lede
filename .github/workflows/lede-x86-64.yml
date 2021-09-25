@@ -67,7 +67,7 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
     
-    - name: Cache
+    - name: Cache 缓存加速
       if: env.CACHEFLAG == 'true' && !cancelled()
       uses: klever1988/cachewrtbuild@main
       with:
