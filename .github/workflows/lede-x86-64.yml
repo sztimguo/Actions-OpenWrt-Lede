@@ -67,12 +67,12 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
     
-    - name: Cache 缓存加速
-      if: env.CACHEFLAG == 'true' && !cancelled()
-      uses: klever1988/cachewrtbuild@main
-      with:
-        ccache: 'true'
-        prefix: ${{ github.workspace }}/openwrt
+    #- name: Cache 缓存加速
+      #if: env.CACHEFLAG == 'true' && !cancelled()
+      #uses: klever1988/cachewrtbuild@main
+      #with:
+        #ccache: 'true'
+        #prefix: ${{ github.workspace }}/openwrt
         
     - name: Load custom feeds 加载自定义设置
       run: |
@@ -110,7 +110,7 @@ jobs:
       run: |
         cd openwrt
         #缓存使用
-        echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config;
+        #echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config;
         make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
