@@ -34,7 +34,6 @@ env:
   UPLOAD_RELEASE: true
   SERVERCHAN_SCKEY: false
   BOT: true
-  CACHEFLAG: false
   RECENT_LASTEST: 3  
   TZ: Asia/Shanghai
 
@@ -66,12 +65,6 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-    - name: Cache
-      if: env.CACHEFLAG == 'true' && !cancelled()
-      uses: klever1988/cachewrtbuild@main
-      with:
-        ccache: 'true'
-        prefix: ${{ github.workspace }}/openwrt
         
     - name: Load custom feeds 加载自定义设置
       run: |
