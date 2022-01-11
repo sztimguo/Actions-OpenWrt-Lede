@@ -25,6 +25,9 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # 更换 opkg 源
 # echo "sed -i 's#https://mirrors.cloud.tencent.com/lede/snapshots#https://xxxxxxxx#g' /etc/opkg/distfeeds.conf" >> package/lean/default-settings/files/zzz-default-settings
 
+if [ ! -d package/lede ];then
+  mkdir -p package/lede
+fi
 pushd package/lede
 
 # Add luci-app-diskman
