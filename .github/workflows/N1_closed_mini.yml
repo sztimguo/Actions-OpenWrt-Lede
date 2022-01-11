@@ -23,9 +23,9 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: N1_mini.config
-  DIY_P1_SH: N1_diy_part1.sh
-  DIY_P2_SH: N1_diy_part2.sh
+  CONFIG_FILE: build/N1/N1_mini.config
+  DIY_P1_SH: build/N1/N1_diy_part1.sh
+  DIY_P2_SH: build/N1/N1_diy_part2.sh
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: false

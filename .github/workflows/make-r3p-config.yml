@@ -16,8 +16,8 @@ on:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  CONFIG_FILE: R3P.config
-  DIY_SH: diy-part2.sh
+  CONFIG_FILE: build/R3P/R3P.config
+  DIY_SH: build/R3P/diy-part2.sh
   TZ: Asia/Shanghai
   SSH_ACTIONS: false
 
