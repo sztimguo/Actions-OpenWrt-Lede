@@ -87,3 +87,11 @@ git clone --depth=1 https://github.com/netitgo/luci-theme-jj.git
 popd
 
 
+# Add luci-app-dockerman and setup
+echo "Add luci-app-dockerman and setup"
+svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
+svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
+if [ -e feeds/packages/utils/docker-ce ];then
+sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
+sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
+fi
