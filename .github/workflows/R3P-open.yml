@@ -196,8 +196,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
       with:
-        name: ${{ env.FILE_DATE }} 「 R3P-closed 」
-        tag_name: ${{ env.tag_name }}-R3Pclosed
+        name: ${{ env.FILE_DATE }} 「 R3P-open 」
+        tag_name: ${{ env.tag_name }}-R3Popen
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
 
