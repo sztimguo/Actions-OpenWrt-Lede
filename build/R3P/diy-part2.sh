@@ -4,7 +4,7 @@
 # sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
 # 修改IP项的EOF于EOF之间请不要插入其他扩展代码，可以删除或注释里面原本的代码
 cat >$NETIP <<-EOF
-uci set network.lan.ipaddr='192.168.1.2'                                    # IPv4 地址(openwrt后台地址)
+uci set network.lan.ipaddr='192.168.1.5'                                    # IPv4 地址(openwrt后台地址)
 uci set network.lan.netmask='255.255.255.0'                             # IPv4 子网掩码
 uci set network.lan.gateway='192.168.1.1'                                 # IPv4 网关
 uci set network.lan.broadcast='192.168.1.255'                           # IPv4 广播
@@ -85,14 +85,3 @@ echo "Add new theme jj"
 git clone --depth=1 https://github.com/netitgo/luci-theme-jj.git
 
 popd
-
-
-
-# Add luci-app-dockerman and setup
-echo "Add luci-app-dockerman and setup"
-svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
-svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
-if [ -e feeds/packages/utils/docker-ce ];then
-sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
-sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
-fi
