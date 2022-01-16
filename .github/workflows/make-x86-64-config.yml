@@ -48,6 +48,8 @@ jobs:
         
         cd /upload
         echo "UPLOAD=$PWD" >> $GITHUB_ENV
+        echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
+        echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
         
     - name: Clone source code | 下载固件源码
       working-directory: /workdir
