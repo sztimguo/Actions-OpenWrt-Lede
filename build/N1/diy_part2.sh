@@ -74,27 +74,46 @@ git clone --depth=1 https://github.com/fw876/helloworld
 svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
 cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
-
+# 以下为添加主题部分
 # Add luci-theme-argon
 echo "Add luci-theme-argon"
 rm -rf ./luci-theme-argon
-git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon
+
+# Add luci-theme-argonne
+echo "Add luci-theme-argonne"
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-argonne
+
+# Add luci-app-argonne-config
+echo "Add luci-app-argonne-config"
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-argonne-config
+
+# Add luci-theme-atmaterial_new
+echo "Add luci-theme-atmaterial_new"
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-atmaterial_new
+
+# Add luci-theme-edge
+echo "Add luci-theme-edge"
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-edge
+
+# Add luci-theme-ifit
+echo "Add luci-theme-ifit"
+svn co  https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-ifit
 
 #add new theme jj
-echo "add new theme jj"
+echo "Add new theme jj"
 git clone --depth=1 https://github.com/netitgo/luci-theme-jj.git
+
+# Add luci-theme-mcat
+echo "Add luci-theme-mcat"
+svn co https://github.com/kenzok8/openwrt-packages/openwrt-packages/trunk/luci-theme-mcat
+
+# Add luci-theme-tomato
+echo "Add luci-theme-tomato"
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-tomato
 
 popd
 
-
-
-echo "Add luci-app-dockerman and setup"
-svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
-svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
-if [ -e feeds/packages/utils/docker-ce ];then
-sed -i '/dockerd/d' package/luci-app-dockerman/Makefile
-sed -i 's/+docker/+docker-ce/g' package/luci-app-dockerman/Makefile
-fi
 
 echo "修复NTFS格式优盘不自动挂载"
 packages=" \
