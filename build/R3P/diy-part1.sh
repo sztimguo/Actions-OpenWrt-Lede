@@ -40,3 +40,5 @@ rm -rf /etc/networkip
 rm -rf /etc/webweb.sh
 exit 0
 EOF
+
+echo "diy-part1.sh部分已执行完毕！"
