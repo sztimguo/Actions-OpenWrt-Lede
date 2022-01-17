@@ -12,11 +12,11 @@
 [Read the details in my blog (in Chinese) | 中文教程](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
 
 ## 使用教程:
-Xiaomi R3P 编译固件后台地址：192.168.1.1 密码:空
-
-X86 编译固件后台地址：192.168.1.1 密码:空
+X86 编译固件后台地址：192.168.1.2 密码:空
 
 Phicomm N1 编译固件后台地址：192.168.1.2 密码:password
+
+Xiaomi R3P 编译固件后台地址：192.168.1.5 密码:空
 
 
 #### 源码来源：
