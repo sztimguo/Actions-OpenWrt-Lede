@@ -3,6 +3,7 @@
 # echo '修改默认LAN口IP'
 # sed -i 's/192.168.1.1/192.168.1.5/g' package/base-files/files/bin/config_generate
 
+echo "修改默认LAN口IP，及相应的局域网设置，详细见diy-part1.sh设置"
 sed -i "/exit 0/i\chmod +x /etc/webweb.sh && source /etc/webweb.sh" $ZZZ
 
 # 设置密码为空
