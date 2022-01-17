@@ -106,3 +106,5 @@ echo "Add luci-theme-tomato"
 svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-tomato
 
 popd
+
+echo "diy-part2.sh已执行完毕！"
