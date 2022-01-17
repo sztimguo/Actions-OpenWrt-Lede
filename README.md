@@ -1,4 +1,4 @@
-# 借助 GitHub Actions 的 OpenWrt 在线集成自动编译.
+# OpenWrt 在线集成自动编译.
 ![license](https://img.shields.io/github/license/roacn/Actions-OpenWrt-Lede?color=ff69b4)
 ![N1_plus](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Plus/badge.svg)
 ![N1_mini](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Mini/badge.svg)
