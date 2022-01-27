@@ -187,7 +187,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt_${{ env.PATCHVER }}_${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
+        name: OpenWrt_${{ env.PATCHVER }}${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
         path: ${{ env.FIRMWARE }}
         retention-days: ${{ env.RECENT_LASTEST }}
         if-no-files-found: ignore
