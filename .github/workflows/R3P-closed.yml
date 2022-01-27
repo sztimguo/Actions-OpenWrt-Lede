@@ -175,7 +175,6 @@ jobs:
         find -name "*.manifest*" | xargs -i mv -f {} packages
         find -name "*.json*" | xargs -i mv -f {} packages
         find -name "*sha256sums*" | xargs -i mv -f {} packages
-        find -name "*feeds.buildinfo*" | xargs -i mv -f {} packages
         rm -rf packages
         rename -v "s/^openwrt/${{ env.PATCHVER }}-openwrt/" *
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
