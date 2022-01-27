@@ -39,7 +39,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout 检查项目分支
@@ -49,9 +50,9 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /usr/lib/jvm /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+        sudo -E apt-get -qq install -y build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 lib32stdc++6 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl rename libpcap0.8-dev swig rsync
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -69,6 +70,7 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        echo "Home=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
         
     - name: Load custom feeds 加载自定义设置
       run: |
@@ -98,11 +100,41 @@ jobs:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
+    - name: Make deconfig 生成配置文件
+      id: makedeconfig
+      run: |
+        cd openwrt
+        #缓存使用
+        echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config;
+        make defconfig
+        echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+
+    - name: Get patchver 查询内核版本
+      id: patchver
+      run: |
+        cd openwrt
+        if [[ `grep -c "KERNEL_PATCHVER:=" ${Home}/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
+          PATCHVE="$(egrep -o 'KERNEL_PATCHVER:=[0-9]+\.[0-9]+' ${Home}/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
+          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
+        elif [[ `grep -c "KERNEL_PATCHVER=" ${Home}/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
+          PATCHVE="$(egrep -o 'KERNEL_PATCHVER=[0-9]+\.[0-9]+' ${Home}/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
+          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
+        else
+          echo "PATCHVER=unknown" >> $GITHUB_ENV
+        fi
+        if [[ -n ${PATCHVE} ]] && [[ -f ${Home}/include/kernel-${PATCHVE} ]]; then
+          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" ${Home}/include/kernel-${PATCHVE})
+          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
+        elif [[ -n ${PATCHVE} ]] && [[ ! -f ${Home}/include/kernel-${PATCHVE} ]]; then
+          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" ${Home}/include/kernel-version.mk)
+          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
+        fi
+        echo "PATCHVER=${PATCHVER}"
+        
     - name: Download package 下载安装包
       id: package
       run: |
         cd openwrt
-        make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
@@ -141,9 +173,11 @@ jobs:
         find -name "*esxi.vmdk*" | xargs -i mv -f {} packages
         find -name "*.buildinfo*" | xargs -i mv -f {} packages
         find -name "*.manifest*" | xargs -i mv -f {} packages
+        find -name "*.json*" | xargs -i mv -f {} packages
         find -name "*sha256sums*" | xargs -i mv -f {} packages
         find -name "*feeds.buildinfo*" | xargs -i mv -f {} packages
         rm -rf packages
+        rename -v "s/^openwrt/${{ env.PATCHVER }}-openwrt/" *
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         cp $GITHUB_WORKSPACE/openwrt/.config R3P.config
         mv -f config.buildinfo R3P-diff.config
@@ -153,7 +187,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt_5.4${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
+        name: OpenWrt_${{ env.PATCHVER }}_${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
         path: ${{ env.FIRMWARE }}
         retention-days: ${{ env.RECENT_LASTEST }}
         if-no-files-found: ignore
@@ -229,4 +263,3 @@ jobs:
       if: steps.tag.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
       run: |
         curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_DATE }} 「 R3P-closed 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
-
