@@ -110,7 +110,7 @@ jobs:
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
 
     - name: Get patchver 查询内核版本
-      id: patchver
+      continue-on-error: true
       run: |
         cd openwrt
         if [[ `grep -c "KERNEL_PATCHVER:=" ${Home}/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
