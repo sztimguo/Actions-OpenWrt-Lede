@@ -105,8 +105,6 @@ jobs:
       id: makedeconfig
       run: |
         cd openwrt
-        #缓存使用
-        echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config;
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
     - name: Get patchver 查询CPU型号、内核版本
