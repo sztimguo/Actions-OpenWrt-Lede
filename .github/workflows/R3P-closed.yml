@@ -169,6 +169,10 @@ jobs:
       if: steps.compile.outputs.status == 'success' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
+        rename -v "s/^openwrt/${{ env.PATCHVER }}-openwrt/" *
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        cp $GITHUB_WORKSPACE/openwrt/.config R3P.config
+        mv -f config.buildinfo R3P-diff.config        
         rm -rf packages && mkdir packages
         find -name "*esxi-flat.vmdk*" | xargs -i mv -f {} packages
         find -name "*vmlinuz*" | xargs -i mv -f {} packages
@@ -178,10 +182,6 @@ jobs:
         find -name "*.json*" | xargs -i mv -f {} packages
         find -name "*sha256sums*" | xargs -i mv -f {} packages
         rm -rf packages
-        rename -v "s/^openwrt/${{ env.PATCHVER }}-openwrt/" *
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        cp $GITHUB_WORKSPACE/openwrt/.config R3P.config
-        mv -f config.buildinfo R3P-diff.config
         echo "::set-output name=status::success"        
    
     - name: Upload firmware directory 上传固件到github
