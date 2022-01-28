@@ -40,7 +40,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout 检查项目分支
@@ -50,19 +51,22 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /usr/lib/jvm /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+        sudo -E apt-get -qq install -y build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 lib32stdc++6 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl rename libpcap0.8-dev swig rsync
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         
+        echo "FILE_DATE=$(date "+%Y-%m-%d %H:%M")"  >> $GITHUB_ENV
+        echo "FILE_TIME=$(date "+%Y年%m月%d日-%H点")" >> $GITHUB_ENV
+        echo "tag_name=$(date "+%Y%m%d%H%M")"  >> $GITHUB_ENV
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "WEBWEB=package/base-files/files/etc/webweb.sh" >> $GITHUB_ENV
         echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
-                
+        
     - name: Clone source code 下载固件源码
       working-directory: /workdir
       run: |
@@ -107,6 +111,7 @@ jobs:
         cd openwrt
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+
     - name: Get patchver 查询CPU型号、内核版本
       continue-on-error: true
       run: |
@@ -157,12 +162,12 @@ jobs:
         echo "::set-output name=status::success"
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
-
+        
     - name: Check space usage 查看磁盘使用情况
       if: (!cancelled())
       run: df -hT
 
-    - name: Upload bin directory 上传bin压缩目录
+    - name: Upload bin directory to Actions 上传bin压缩目录
       uses: actions/upload-artifact@main
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
@@ -176,8 +181,11 @@ jobs:
       if: steps.compile.outputs.status == 'success' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
-        rm -rf packages && mkdir packages
+        rename -v "s/^openwrt/${{ env.PATCHVER }}-openwrt/" *
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        cp $GITHUB_WORKSPACE/openwrt/.config x86-64.config
         mv -f config.buildinfo x86-64-diff.config
+        rm -rf packages && mkdir packages
         #find -name "*esxi-flat.vmdk*" | xargs -i mv -f {} packages
         find -name "*kernel.bin*" | xargs -i mv -f {} packages
         find -name "*rootfs*" | xargs -i mv -f {} packages
@@ -187,19 +195,13 @@ jobs:
         find -name "*buildinfo*" | xargs -i mv -f {} packages
         find -name "*sha256sums*" | xargs -i mv -f {} packages
         rm -rf packages
-        
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        cp $GITHUB_WORKSPACE/openwrt/.config x86-64.config
-        echo "FILE_DATE=$(date "+%Y-%m-%d %H:%M")"  >> $GITHUB_ENV
-        echo "FILE_TIME=$(date "+%Y年%m月%d日-%H点")" >> $GITHUB_ENV
-        echo "tag_name=$(date "+%Y%m%d%H%M")"  >> $GITHUB_ENV
-        echo "::set-output name=status::success"
-        
+        echo "::set-output name=status::success"        
+   
     - name: Upload firmware directory 上传固件到github
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()      
       with:
-        name: OpenWrt_5.4${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
+        name: OpenWrt_${{ env.PATCHVER }}${{ env.DEVICE_NAME }}${{ env.FILE_UPLOAD_TIME }}
         path: ${{ env.FIRMWARE }}
         retention-days: ${{ env.RECENT_LASTEST }}
         if-no-files-found: ignore
@@ -256,7 +258,7 @@ jobs:
         retain_days: 7
         keep_minimum_runs: 0
         
-    - name: Remove old Releases 删除旧的Releases
+    - name: Remove old Releases 删除旧版 Releases
       uses: dev-drprasad/delete-older-releases@v0.1.0
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
