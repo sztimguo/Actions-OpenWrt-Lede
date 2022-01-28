@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: R3P-closed
+name: R3P-lede
 
 on:
   repository_dispatch:
@@ -23,7 +23,7 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   #FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: build/R3P/R3P.config
+  CONFIG_FILE: build/R3P/lede.config
   DIY_P1_SH: build/R3P/diy-part1.sh
   DIY_P2_SH: build/R3P/diy-part2.sh
   SSH_ACTIONS: false
@@ -224,9 +224,9 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       uses: ncipollo/release-action@v1
       with:
-        name: ${{ env.FILE_RELEASE_TIME }} 「 R3P-closed 」
+        name: ${{ env.FILE_RELEASE_TIME }} 「 R3P-lede 」
         allowUpdates: true
-        tag: ${{ env.tag_name }}-R3P-closed
+        tag: ${{ env.tag_name }}-R3P-lede
         commit: main
         token: ${{ secrets.RELEASES_TOKEN }}
         body: |
@@ -253,10 +253,10 @@ jobs:
       if: steps.release.outputs.status == 'success' && env.SERVERCHAN_SCKEY == 'true' && !cancelled()
       with:
         SCKEY: ${{ secrets.SERVERCHAN_SCKEY }}
-        text: 恭喜主人「 R3P-closed 」固件编译成功！
-        desp: 我亲爱的主人：您「 Actions-OpenWrt-Lede」仓库编译的 ${{ env.FILE_RELEASE_TIME }} 「 R3P-closed 」固件顺利编译完成了！
+        text: 恭喜主人「 R3P-lede 」固件编译成功！
+        desp: 我亲爱的主人：您「 Actions-OpenWrt-Lede」仓库编译的 ${{ env.FILE_RELEASE_TIME }} 「 R3P-lede 」固件顺利编译完成了！
         
     - name: Bot notice | 电报机器人信息通知
       if: steps.release.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
       run: |
-        curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_RELEASE_TIME }} 「 R3P-closed 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
+        curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_RELEASE_TIME }} 「 R3P-lede 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
