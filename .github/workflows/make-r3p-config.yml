@@ -31,7 +31,7 @@ jobs:
     - name: Checkout | 检查项目分支
       uses: actions/checkout@v2
 
-    - name: Initialization Environment | 安装编译环境
+    - name: Initialization environment | 安装编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
@@ -60,7 +60,7 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt     
         
-    - name: Load Custom Configuration 1 | 加载自定义设置 1
+    - name: Load custom configuration 1 | 加载自定义设置 1
       run: |
         #[ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
@@ -81,35 +81,36 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: Get patchver 查询CPU型号、内核版本
-      continue-on-error: true
-      run: |
-        cd openwrt
-        if [[ `grep -c "KERNEL_PATCHVER:=" ${Home}/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
-          PATCHVE="$(egrep -o 'KERNEL_PATCHVER:=[0-9]+\.[0-9]+' ${Home}/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
-          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
-        elif [[ `grep -c "KERNEL_PATCHVER=" ${Home}/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
-          PATCHVE="$(egrep -o 'KERNEL_PATCHVER=[0-9]+\.[0-9]+' ${Home}/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
-          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
-        else
-          echo "PATCHVER=unknown" >> $GITHUB_ENV
-        fi
-        if [[ -n ${PATCHVE} ]] && [[ -f ${Home}/include/kernel-${PATCHVE} ]]; then
-          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" ${Home}/include/kernel-${PATCHVE})
-          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
-        elif [[ -n ${PATCHVE} ]] && [[ ! -f ${Home}/include/kernel-${PATCHVE} ]]; then
-          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" ${Home}/include/kernel-version.mk)
-          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
-        fi
-        echo "内核版本：${PATCHVER}"
-        cpuinfo=`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c | sed 's/      //'`
-        echo "CPU型号：${cpuinfo}"
-        
     - name: Make Config | 生成config
       run: |     
         cd openwrt
         ls -a
         make defconfig
+        echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+        
+    - name: Get patchver 查询CPU型号、内核版本
+      continue-on-error: true
+      run: |
+        cd openwrt
+        if [[ `grep -c "KERNEL_PATCHVER:=" $GITHUB_WORKSPACE/openwrt/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
+          PATCHVE="$(egrep -o 'KERNEL_PATCHVER:=[0-9]+\.[0-9]+' $GITHUB_WORKSPACE/openwrt/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
+          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
+        elif [[ `grep -c "KERNEL_PATCHVER=" $GITHUB_WORKSPACE/openwrt/target/linux/${TARGET_BOARD}/Makefile` -eq '1' ]]; then
+          PATCHVE="$(egrep -o 'KERNEL_PATCHVER=[0-9]+\.[0-9]+' $GITHUB_WORKSPACE/openwrt/target/linux/${TARGET_BOARD}/Makefile |cut -d "=" -f2)"
+          echo "PATCHVE=${PATCHVE}" >> $GITHUB_ENV
+        else
+          echo "PATCHVER=unknown" >> $GITHUB_ENV
+        fi
+        if [[ -n ${PATCHVE} ]] && [[ -f $GITHUB_WORKSPACE/openwrt/include/kernel-${PATCHVE} ]]; then
+          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" $GITHUB_WORKSPACE/openwrt/include/kernel-${PATCHVE})
+          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
+        elif [[ -n ${PATCHVE} ]] && [[ ! -f $GITHUB_WORKSPACE/openwrt/include/kernel-${PATCHVE} ]]; then
+          PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" $GITHUB_WORKSPACE/openwrt/include/kernel-version.mk)
+          echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
+        fi
+        echo "内核版本：${PATCHVER}"
+        cpuinfo=`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c | sed 's/      //'`
+        echo "CPU型号：${cpuinfo}"
         
     - name: SSH connection to Actions | SSH链接管理
       uses: P3TERX/ssh2actions@v1.0.0
