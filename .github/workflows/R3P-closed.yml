@@ -130,7 +130,7 @@ jobs:
           echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
         fi
         echo "内核版本：${PATCHVER}"
-        cpuinfo=`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c`
+        cpuinfo=`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c | sed 's/      //'`
         echo "CPU型号：${cpuinfo}"
         
     - name: Download package 下载安装包
