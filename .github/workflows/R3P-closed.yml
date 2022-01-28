@@ -45,7 +45,7 @@ jobs:
 
     steps:
     - name: Checkout | 检查项目分支
-      uses: actions/checkout@main
+      uses: actions/checkout@v2
 
     - name: Initialization environment | 安装编译环境
       env:
