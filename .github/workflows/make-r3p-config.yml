@@ -16,7 +16,7 @@ on:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  CONFIG_FILE: build/R3P/R3P.config
+  CONFIG_FILE: build/R3P/lede.config
   DIY_P1_SH: build/R3P/diy-part1.sh
   DIY_P2_SH: build/R3P/diy-part2.sh
   TZ: Asia/Shanghai
@@ -58,7 +58,7 @@ jobs:
       run: |
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
-        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt     
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         
     - name: Load custom configuration 1 | 加载自定义设置 1
       run: |
@@ -70,7 +70,7 @@ jobs:
     - name: Update feeds | 下载插件
       run: cd openwrt && ./scripts/feeds update -a
 
-    - name: Install feeds | 读取插件
+    - name: Install feeds | 安装插件
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration 2 | 加载自定义设置 2
