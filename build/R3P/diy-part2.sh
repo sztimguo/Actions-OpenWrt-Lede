@@ -56,7 +56,7 @@ rm -rf ./small/xray-plugin
 
 #passwall setup
 echo "Passwall setup"
-svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/usr/share/passwall/rules rules
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/usr/share/passwall/rules rules
 cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
 #cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
 #cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
@@ -65,7 +65,7 @@ cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rul
 # Add luci-app-ssr-plus
 echo "Add  luci-app-ssr-plus"
 git clone --depth=1 https://github.com/fw876/helloworld
-svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/root/etc/ssrplus ssrplus
+svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/etc/ssrplus ssrplus
 cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
 
 # 以下为添加主题部分
