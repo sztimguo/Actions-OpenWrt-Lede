@@ -110,6 +110,15 @@ jobs:
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
 
+    - name: Upload .config | 上传.config到github
+      uses: actions/upload-artifact@main
+      if: steps.makedeconfig.outputs.status == 'success' && env.UPLOAD_CONFIG == 'true' && !cancelled()      
+      with:
+        name: R3P.confg
+        path: .config
+        retention-days: 7
+        if-no-files-found: ignore
+        
     - name: Get patchver | 查询CPU型号、内核版本
       continue-on-error: true
       run: |
@@ -141,15 +150,6 @@ jobs:
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-    
-    - name: Upload .config | 上传.config到github
-      uses: actions/upload-artifact@main
-      if: steps.package.outputs.status == 'success' && env.UPLOAD_CONFIG == 'true' && !cancelled()      
-      with:
-        name: x86-64.confg
-        path: .config
-        retention-days: 7
-        if-no-files-found: ignore
         
     - name: Compile the firmware | 开始编译固件
       id: compile
@@ -276,4 +276,3 @@ jobs:
       if: steps.release.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
       run: |
         curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_RELEASE_TIME }} 「 lede-x86-64 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
-      
