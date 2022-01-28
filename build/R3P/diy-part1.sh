@@ -18,16 +18,23 @@
 
 # 修改IP项的EOF于EOF之间请不要插入其他扩展代码，可以删除或注释里面原本的代码
 cat >$NETIP <<-EOF
+uci delete network.wan                                                               # 删除wan口
+uci delete network.wan6                                                             # 删除wan6口
+uci set network.lan=interface                                                     # lan口接口 
+uci set network.lan.device='br-lan'                                            # lan口设备
+uci set network.lan.type='bridge'                                               # lan口桥接
+uci set network.lan.proto='static'                                               # lan口静态IP
 uci set network.lan.ipaddr='192.168.1.5'                                    # IPv4 地址(openwrt后台地址)
 uci set network.lan.netmask='255.255.255.0'                             # IPv4 子网掩码
 uci set network.lan.gateway='192.168.1.1'                                 # IPv4 网关
 uci set network.lan.broadcast='192.168.1.255'                           # IPv4 广播
 uci set network.lan.dns='211.136.150.66 223.5.5.5'                    # DNS(多个DNS要用空格分开)
 uci set network.lan.delegate='0'                                                 # 去掉LAN口使用内置的 IPv6 管理
+uci set network.lan.ifname='lan1 lan2 lan3 wan'                        # 设置物理接口为lan1 lan2 lan3 wan
 uci commit network                                                                    # 不要删除跟注释,除非上面全部删除或注释掉了
 uci set dhcp.lan.ignore='1'                                                          # 关闭DHCP功能
 uci commit dhcp                                                                          # 跟‘关闭DHCP功能’联动,同时启用或者删除跟注释
-uci set system.@system[0].hostname='OpenWrt-MI'               # 修改主机名称为OpenWrt-MI
+uci set system.@system[0].hostname='MI'                                 # 修改主机名称为MI
 EOF
 
 cat >$WEBWEB <<-EOF
