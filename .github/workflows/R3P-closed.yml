@@ -109,7 +109,7 @@ jobs:
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
 
-    - name: Get patchver 查询内核版本
+    - name: Get patchver 查询CPU型号、内核版本
       continue-on-error: true
       run: |
         cd openwrt
@@ -129,7 +129,9 @@ jobs:
           PATCHVER=$(egrep -o "${PATCHVE}.[0-9]+" ${Home}/include/kernel-version.mk)
           echo "PATCHVER=${PATCHVER}" >> $GITHUB_ENV
         fi
-        echo "PATCHVER=${PATCHVER}"
+        echo "内核版本：${PATCHVER}"
+        cpuinfo=`cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c`
+        echo "CPU型号：${cpuinfo}"
         
     - name: Download package 下载安装包
       id: package
