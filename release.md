@@ -12,4 +12,4 @@
 
 ## 源码
 
-- [固件源码](https://github.com/openwrt/openwrt)
+- [Lede_source](https://github.com/coolsnowwolf/lede)
