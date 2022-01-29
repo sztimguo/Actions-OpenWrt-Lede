@@ -31,6 +31,9 @@ uci set network.lan.delegate='0'                                                
 uci set network.lan.ifname='eth0 eth1'                                       # 设置lan口物理接口为eth0、eth1
 uci set network.lan.mtu='1492'                                                   # lan口mtu设置为1492
 uci commit network                                                                    # 不要删除跟注释,除非上面全部删除或注释掉了
+uci delete dhcp.lan.ra                                                                  # 路由通告服务，设置为“已禁用”
+uci delete dhcp.lan.ra_management                                           # 路由通告服务，设置为“已禁用”
+uci delete dhcp.lan.dhcpv6                                                         # DHCPv6 服务，设置为“已禁用”
 uci set dhcp.lan.ignore='1'                                                          # 关闭DHCP功能
 uci commit dhcp                                                                         # 跟‘关闭DHCP功能’联动,同时启用或者删除跟注释
 uci set system.@system[0].hostname='OpenWrtX'                    # 修改主机名称为OpenWrtX
