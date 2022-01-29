@@ -15,6 +15,10 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # 更换 opkg 源
 # echo "sed -i 's#https://mirrors.cloud.tencent.com/lede/snapshots#https://xxxxxxxx#g' /etc/opkg/distfeeds.conf" >> package/lean/default-settings/files/zzz-default-settings
 
+# echo '修改Bdata分区可写，修改ssh永久开启专用，平时须关闭'
+svn co https://github.com/roacn/Actions-OpenWrt-R3P/trunk/files/target/linux/ramips/dts dts
+cp -f dts/mt7621_xiaomi_mi-router-3-pro.dts target/linux/ramips/dts/mt7621_xiaomi_mi-router-3-pro.dts
+
 if [ ! -d package/lean ];then
   mkdir -p package/lean
 fi
