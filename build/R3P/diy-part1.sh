@@ -31,7 +31,11 @@ uci set network.lan.broadcast='192.168.1.255'                           # IPv4 �
 uci set network.lan.dns='211.136.150.66 223.5.5.5'                    # DNS(多个DNS要用空格分开)
 uci set network.lan.delegate='0'                                                 # 去掉LAN口使用内置的 IPv6 管理
 uci set network.lan.ifname='lan1 lan2 lan3 wan'                        # 设置物理接口为lan1 lan2 lan3 wan
+uci set network.lan.mtu='1492'                                                   # 设置mtu为1492
 uci commit network                                                                    # 不要删除跟注释,除非上面全部删除或注释掉了
+uci delete dhcp.lan.ra                                                                  # 路由通告服务，设置为“已禁用”
+uci delete dhcp.lan.ra_management                                           # 路由通告服务，设置为“已禁用”
+uci delete dhcp.lan.dhcpv6                                                         # DHCPv6 服务，设置为“已禁用”
 uci set dhcp.lan.ignore='1'                                                          # 关闭DHCP功能
 uci commit dhcp                                                                          # 跟‘关闭DHCP功能’联动,同时启用或者删除跟注释
 uci set system.@system[0].hostname='MI'                                 # 修改主机名称为MI
