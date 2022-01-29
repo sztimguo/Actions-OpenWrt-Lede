@@ -230,8 +230,7 @@ jobs:
         tag: ${{ env.tag_name }}-R3P-lede
         commit: main
         token: ${{ secrets.RELEASES_TOKEN }}
-        body: |
-          默认IP：192.168.1.5 默认密码：空
+        bodyFile: "release.md"
         artifacts:  ${{ env.FIRMWARE }}/*
         
     - name: Delete workflow runs | 清理workflow
