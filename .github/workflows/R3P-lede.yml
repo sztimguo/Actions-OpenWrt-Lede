@@ -110,6 +110,7 @@ jobs:
         ls -a
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
     - name: Upload .config | 上传.config到github
       uses: actions/upload-artifact@main
