@@ -231,7 +231,7 @@ jobs:
         tag: ${{ env.tag_name }}-R3P-lede
         commit: main
         token: ${{ secrets.RELEASES_TOKEN }}
-        bodyFile: "release.md"
+        bodyFile: "R3P.md"
         artifacts:  ${{ env.FIRMWARE }}/*
         
     - name: Delete workflow runs | 清理workflow
