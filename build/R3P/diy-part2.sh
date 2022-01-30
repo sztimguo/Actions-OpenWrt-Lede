@@ -10,7 +10,7 @@ sed -i "/exit 0/i\chmod +x /etc/webweb.sh && source /etc/webweb.sh" $ZZZ
 sed -i '/CYXluq4wUazHjmCDBCqXF/d' $ZZZ
 
 # 选择argon为默认主题
-sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+# sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # 更换 opkg 源
 # echo "sed -i 's#https://mirrors.cloud.tencent.com/lede/snapshots#https://xxxxxxxx#g' /etc/opkg/distfeeds.conf" >> package/lean/default-settings/files/zzz-default-settings
@@ -25,90 +25,61 @@ fi
 pushd package/lean
 
 # Add luci-app-diskman
-echo "Add luci-app-diskman"
-rm -rf ./luci-app-diskman
-git clone --depth=1 https://github.com/lisaac/luci-app-diskman
-mkdir parted
-cp luci-app-diskman/Parted.Makefile parted/Makefile
+#echo "Add luci-app-diskman"
+#rm -rf ./luci-app-diskman
+#svn co https://github.com/roacn/openwrt-packages/trunk/luci-app-diskman
 
 # Add luci-app-onliner (need luci-app-nlbwmon)
-echo "Add luci-app-onliner (need luci-app-nlbwmon)"
-git clone --depth=1 https://github.com/rufengsuixing/luci-app-onliner
+#echo "Add luci-app-onliner (need luci-app-nlbwmon)"
+#svn co https://github.com/roacn/openwrt-packages/trunk/luci-app-onliner/Makefile
 
-# Add luci-app-serverchan
-echo "Add luci-app-serverchan"
-git clone --depth=1 https://github.com/tty228/luci-app-serverchan
+#echo "Add luci-app-passwall"
+#rm -rf ./luci-app-passwall
+#svn co https://github.com/roacn/openwrt-packages/trunk/luci-app-passwall
+#svn co https://github.com/roacn/openwrt-packages/trunk/brook
+#svn co https://github.com/roacn/openwrt-packages/trunk/chinadns-ng
+#svn co https://github.com/roacn/openwrt-packages/trunk/hysteria
+#svn co https://github.com/roacn/openwrt-packages/trunk/kcptun
+#svn co https://github.com/roacn/openwrt-packages/trunk/naiveproxy
+#svn co https://github.com/roacn/openwrt-packages/trunk/pdnsd-alt
+#svn co https://github.com/roacn/openwrt-packages/trunk/shadowsocks-rust
+#svn co https://github.com/roacn/openwrt-packages/trunk/shadowsocksr-libev
+#svn co https://github.com/roacn/openwrt-packages/trunk/simple-obfs
+#svn co https://github.com/roacn/openwrt-packages/trunk/trojan-go
+#svn co https://github.com/roacn/openwrt-packages/trunk/trojan-plus
+#svn co https://github.com/roacn/openwrt-packages/trunk/trojan
+#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-core
+#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-geodata
+#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-plugin
+#svn co https://github.com/roacn/openwrt-packages/trunk/xray-plugin
+#svn co https://github.com/roacn/openwrt-packages/trunk/xray-core
 
-#add apps
-echo "Clone kenzok8/openwrt-packages"
-git clone --depth=1 https://github.com/kenzok8/openwrt-packages
-rm -rf ./openwrt-packages/luci-app-jd-dailybonus
-rm -rf ./openwrt-packages/luci-app-serverchan
-rm -rf ./openwrt-packages/luci-app-ssr-plus
-rm -rf ./openwrt-packages/luci-theme-argon_new
-rm -rf ./openwrt-packages/naiveproxy
-rm -rf ./openwrt-packages/tcping
-
-echo "Clone  kenzok8/small"
-git clone --depth=1 https://github.com/kenzok8/small
-rm -rf ./small/shadowsocks-rust
-rm -rf ./small/shadowsocksr-libev
-rm -rf ./small/v2ray-core
-rm -rf ./small/v2ray-plugin
-rm -rf ./small/xray-core
-rm -rf ./small/xray-plugin
-
-#passwall setup
-echo "Passwall setup"
-svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/usr/share/passwall/rules rules
-cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
+#echo "Passwall setup"
+#svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/usr/share/passwall/rules rules
+#cp -r ./rules/* ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules
 #cp -r ./rules/direct_ip ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_ip
 #cp -r ./rules/direct_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/direct_host
 #cp -r ./rules/proxy_host ./openwrt-packages/luci-app-passwall/root/usr/share/passwall/rules/proxy_host
 
-# Add luci-app-ssr-plus
-echo "Add  luci-app-ssr-plus"
-git clone --depth=1 https://github.com/fw876/helloworld
-svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/etc/ssrplus ssrplus
-cp -r ./ssrplus/* ./helloworld/luci-app-ssr-plus/root/etc/ssrplus
+echo "Add luci-app-turboacc"
+svn co  https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-turboacc
+svn co  https://github.com/coolsnowwolf/lede/trunk/package/lean/pdnsd-alt
+svn co  https://github.com/coolsnowwolf/lede/trunk/package/lean/dnsforwarder
+svn co  https://github.com/coolsnowwolf/lede/trunk/package/lean/shortcut-fe
 
 # 以下为添加主题部分
 # Add luci-theme-argon
-echo "Add luci-theme-argon"
-rm -rf ./luci-theme-argon
-git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon
+#echo "Add luci-theme-argon"
+#rm -rf ./luci-theme-argon
+#git clone --depth=1 -b master https://github.com/jerrykuku/luci-theme-argon
 
 # Add luci-theme-argonne
-echo "Add luci-theme-argonne"
-svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-argonne
+#echo "Add luci-theme-argonne"
+#svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-argonne
 
 # Add luci-app-argonne-config
-echo "Add luci-app-argonne-config"
-svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-argonne-config
-
-# Add luci-theme-atmaterial_new
-echo "Add luci-theme-atmaterial_new"
-svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-atmaterial_new
-
-# Add luci-theme-edge
-echo "Add luci-theme-edge"
-svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-edge
-
-# Add luci-theme-ifit
-echo "Add luci-theme-ifit"
-svn co  https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-ifit
-
-#add new theme jj
-echo "Add new theme jj"
-git clone --depth=1 https://github.com/netitgo/luci-theme-jj.git
-
-# Add luci-theme-mcat
-echo "Add luci-theme-mcat"
-svn co https://github.com/kenzok8/openwrt-packages/openwrt-packages/trunk/luci-theme-mcat
-
-# Add luci-theme-tomato
-echo "Add luci-theme-tomato"
-svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-tomato
+#echo "Add luci-app-argonne-config"
+#svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-argonne-config
 
 popd
 
