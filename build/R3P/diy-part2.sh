@@ -35,24 +35,7 @@ pushd package/lean
 
 #echo "Add luci-app-passwall"
 #rm -rf ./luci-app-passwall
-#svn co https://github.com/roacn/openwrt-packages/trunk/luci-app-passwall
-#svn co https://github.com/roacn/openwrt-packages/trunk/brook
-#svn co https://github.com/roacn/openwrt-packages/trunk/chinadns-ng
-#svn co https://github.com/roacn/openwrt-packages/trunk/hysteria
-#svn co https://github.com/roacn/openwrt-packages/trunk/kcptun
-#svn co https://github.com/roacn/openwrt-packages/trunk/naiveproxy
-#svn co https://github.com/roacn/openwrt-packages/trunk/pdnsd-alt
-#svn co https://github.com/roacn/openwrt-packages/trunk/shadowsocks-rust
-#svn co https://github.com/roacn/openwrt-packages/trunk/shadowsocksr-libev
-#svn co https://github.com/roacn/openwrt-packages/trunk/simple-obfs
-#svn co https://github.com/roacn/openwrt-packages/trunk/trojan-go
-#svn co https://github.com/roacn/openwrt-packages/trunk/trojan-plus
-#svn co https://github.com/roacn/openwrt-packages/trunk/trojan
-#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-core
-#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-geodata
-#svn co https://github.com/roacn/openwrt-packages/trunk/v2ray-plugin
-#svn co https://github.com/roacn/openwrt-packages/trunk/xray-plugin
-#svn co https://github.com/roacn/openwrt-packages/trunk/xray-core
+#git clone --depth=1 -b main https://github.com/xiaorouji/openwrt-passwall luci-app-passwall
 
 #echo "Passwall setup"
 #svn co https://github.com/roacn/Actions-OpenWrt-Lede/trunk/files/usr/share/passwall/rules rules
