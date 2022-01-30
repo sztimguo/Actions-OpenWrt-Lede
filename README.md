@@ -2,7 +2,8 @@
 ![license](https://img.shields.io/github/license/roacn/Actions-OpenWrt-Lede?color=ff69b4)
 ![N1_plus](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Plus/badge.svg)
 ![N1_mini](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Mini/badge.svg)
-![R3P](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/R3P-closed/badge.svg?)
+![R3P](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/R3P-lede/badge.svg?)
+![R3P](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/R3P-openwrt/badge.svg?)
 ![x86](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/lede-x86-64/badge.svg?)
 ![code-size](https://img.shields.io/github/languages/code-size/roacn/Actions-OpenWrt-Lede?color=blueviolet)
 
