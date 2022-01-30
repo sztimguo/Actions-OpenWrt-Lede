@@ -74,7 +74,7 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-           
+        
     - name: Load custom configuration 1 | 加载自定义设置 1
       run: |
         #[ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -91,7 +91,7 @@ jobs:
     - name: Load custom configuration 2 | 加载自定义设置 2
       run: |
         [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        [ -e $CONFIG_FILE ] && mv -f $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
@@ -107,8 +107,10 @@ jobs:
       id: makedeconfig
       run: |
         cd openwrt
+        ls -a
         make defconfig
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
     - name: Upload .config | 上传.config到github
       uses: actions/upload-artifact@main
@@ -229,8 +231,7 @@ jobs:
         tag: ${{ env.tag_name }}-R3P-openwrt
         commit: main
         token: ${{ secrets.RELEASES_TOKEN }}
-        body: |
-          默认IP：192.168.1.5 默认密码：空
+        bodyFile: "R3P.md"
         artifacts:  ${{ env.FIRMWARE }}/*
         
     - name: Delete workflow runs | 清理workflow
