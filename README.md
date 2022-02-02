@@ -23,7 +23,9 @@ Xiaomi R3P 编译固件后台地址：192.168.1.5 密码:空
 #### 源码来源：
 
 [![Lean](https://img.shields.io/badge/package-Lean-blueviolet.svg?style=flat&logo=appveyor)](https://github.com/coolsnowwolf/lede) 
-[![Lienol](https://img.shields.io/badge/passwall-openwrt-blueviolet.svg?style=flat&logo=appveyor)](https://github.com/xiaorouji/openwrt-passwall) 
+[![Lienol](https://img.shields.io/badge/passwall-openwrt-red.svg?style=flat&logo=appveyor)](https://github.com/xiaorouji/openwrt-passwall) 
+[![helloworld](https://img.shields.io/badge/ssr-fw876-yellow.svg?style=flat&logo=appveyor)](https://github.com/fw876/helloworld)
+[![apps](https://img.shields.io/badge/app-kenzok8-violet.svg?style=flat&logo=appveyor)](https://github.com/kenzok8)
 
 ##### 固件发布:
 
