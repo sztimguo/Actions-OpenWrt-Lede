@@ -1,5 +1,4 @@
 # OpenWrt 在线自动编译.
-![license](https://img.shields.io/github/license/roacn/Actions-OpenWrt-Lede?color=orangered)
 ![N1_plus](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Plus/badge.svg)
 ![N1_mini](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/N1_Mini/badge.svg)
 ![R3P](https://github.com/roacn/Actions-OpenWrt-Lede/workflows/R3P-lede/badge.svg?)
