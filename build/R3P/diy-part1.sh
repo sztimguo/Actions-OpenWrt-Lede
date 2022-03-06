@@ -31,13 +31,27 @@ uci set network.lan.broadcast='192.168.1.255'                           # IPv4 �
 uci set network.lan.dns='211.136.150.66 223.5.5.5'                    # DNS(多个DNS要用空格分开)
 uci set network.lan.delegate='0'                                                 # 去掉LAN口使用内置的 IPv6 管理
 uci set network.lan.ifname='lan1 lan2 lan3 wan'                        # 设置物理接口为lan1 lan2 lan3 wan
-uci set network.lan.mtu='1492'                                                   # 设置mtu为1492
-uci commit network                                                                    # 不要删除跟注释,除非上面全部删除或注释掉了
+uci set network.lan.mtu='1492'                                                   # lan口mtu设置为1492
+uci delete network.lan.ip6assign                                                 #接口→LAN→IPv6 分配长度——关闭，恢复uci set network.lan.ip6assign='64'
+uci commit network
 uci delete dhcp.lan.ra                                                                  # 路由通告服务，设置为“已禁用”
 uci delete dhcp.lan.ra_management                                           # 路由通告服务，设置为“已禁用”
 uci delete dhcp.lan.dhcpv6                                                         # DHCPv6 服务，设置为“已禁用”
 uci set dhcp.lan.ignore='1'                                                          # 关闭DHCP功能
-uci commit dhcp                                                                          # 跟‘关闭DHCP功能’联动,同时启用或者删除跟注释
+uci set dhcp.@dnsmasq[0].filter_aaaa='1'                                   # DHCP/DNS→高级设置→解析 IPv6 DNS 记录——禁止
+uci set dhcp.@dnsmasq[0].cachesize='0'                                    # DHCP/DNS→高级设置→DNS 查询缓存的大小——设置为'0'
+uci add dhcp domain
+uci set dhcp.@domain[0].name='mi'                                           # 网络→主机名→主机目录——“mi”
+uci set dhcp.@domain[0].ip='192.168.1.5'                                  # 对应IP解析——192.168.1.5
+uci add dhcp domain
+uci set dhcp.@domain[1].name='cdn.jsdelivr.net'                       # 网络→主机名→主机目录——“cdn.jsdelivr.net”
+uci set dhcp.@domain[1].ip='104.16.86.20'                                 # 对应IP解析——'104.16.86.20'
+uci commit dhcp
+uci delete firewall.@defaults[0].syn_flood                                 # 防火墙→SYN-flood 防御——关闭；默认开启
+uci set firewall.@defaults[0].fullcone='1'                                     # 防火墙→FullCone-NAT——启用；默认关闭
+uci commit firewall
+uci set dropbear.@dropbear[0].Port='8822'                                # SSH端口设置为'8822'
+uci commit dropbear
 uci set system.@system[0].hostname='MI'                                 # 修改主机名称为MI
 sed -i 's/\/bin\/login/\/bin\/login -f root/' /etc/config/ttyd       # 设置ttyd免帐号登录，如若开启，进入OPENWRT后可能要重启一次才生效
 EOF
