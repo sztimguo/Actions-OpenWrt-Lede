@@ -149,7 +149,7 @@ jobs:
     - name: Package OpenWrt with flippy script 使用flippy脚本打包
       id: packagefirmware
       if: steps.compile.outputs.status == 'success' && !cancelled()
-      uses: roacn/package-flippy-openwrt@main
+      uses: mingxiaoyu/package-flippy-openwrt@main
       with:
         types: s905d
         out: ${{ env.FIRMWARE }}
