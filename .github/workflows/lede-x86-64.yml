@@ -114,7 +114,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.makedeconfig.outputs.status == 'success' && env.UPLOAD_CONFIG == 'true' && !cancelled()      
       with:
-        name: R3P.confg
+        name: x86-64.confg
         path: .config
         retention-days: 7
         if-no-files-found: ignore
