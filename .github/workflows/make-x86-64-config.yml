@@ -29,7 +29,7 @@ jobs:
 
     steps:
     - name: Checkout | 检查项目分支
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Initialization environment | 安装编译环境
       env:
