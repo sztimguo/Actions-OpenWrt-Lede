@@ -37,7 +37,7 @@ env:
   BOT: true
   RECENT_LASTEST: 3
   TZ: Asia/Shanghai
-
+  GITHUB_TOKEN: ${{ secrets.CUSTOM_GH_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-20.04
