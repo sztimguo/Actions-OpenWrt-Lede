@@ -37,7 +37,7 @@ env:
   BOT: true
   RECENT_LASTEST: 3
   TZ: Asia/Shanghai
-  GITHUB_TOKEN: ${{ secrets.CUSTOM_GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.TIM_GITHUB_TOKEN }}
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -230,7 +230,7 @@ jobs:
         allowUpdates: true
         tag: ${{ env.tag_name }}-R3P-lede
         commit: main
-        token: ${{ secrets.RELEASES_TOKEN }}
+        token: ${{ secrets.TIM_GITHUB_TOKEN }}
         bodyFile: "R3P.md"
         artifacts:  ${{ env.FIRMWARE }}/*
         
@@ -247,17 +247,4 @@ jobs:
         keep_latest: 3
         delete_tags: true
       env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-
-    - name: Wechat notice | 微信通知
-      uses: emon100/Action-Serverchan@v2
-      if: steps.release.outputs.status == 'success' && env.SERVERCHAN_SCKEY == 'true' && !cancelled()
-      with:
-        SCKEY: ${{ secrets.SERVERCHAN_SCKEY }}
-        text: 恭喜主人「 R3P-lede 」固件编译成功！
-        desp: 我亲爱的主人：您「 Actions-OpenWrt-Lede」仓库编译的 ${{ env.FILE_RELEASE_TIME }} 「 R3P-lede 」固件顺利编译完成了！
-        
-    - name: Bot notice | 电报机器人信息通知
-      if: steps.release.outputs.status == 'success' && env.BOT == 'true' && !cancelled()
-      run: |
-        curl -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" -d "text=我亲爱的✨主人✨：您使用「 Actions-OpenWrt-Lede」文件夹编译的${{ env.FILE_RELEASE_TIME }} 「 R3P-lede 」固件顺利编译完成了！💐链接：https://github.com/roacn/Actions-OpenWrt-Lede/releases" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
+        GITHUB_TOKEN: ${{ secrets.TIM_GITHUB_TOKEN }}
